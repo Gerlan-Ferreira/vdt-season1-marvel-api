@@ -135,8 +135,8 @@ describe('POST /characters', () => {
         ]
 
         dataTests.forEach((data) => {
-
             it('validando os campos obrigatórios', () => {
+
                 cy.postCharacter(data.payload)
                     .then((response) => {
                         expect(response.status).to.eql(400)
