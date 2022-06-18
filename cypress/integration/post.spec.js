@@ -97,7 +97,7 @@ describe('POST /characters', () => {
 
     })
 
-    context.only('Irá validar os campos obrigatórios no cadastro de personagens', () => {
+    context('Irá validar os campos obrigatórios no cadastro de personagens', () => {
 
         const dataTests = [
             {
