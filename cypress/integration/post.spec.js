@@ -97,74 +97,54 @@ describe('POST /characters', () => {
 
     })
 
-    context('validar campos obrigatórios no cadastro de personagens', () => {
+    context.only('Irá validar os campos obrigatórios no cadastro de personagens', () => {
 
-        const characterNameIsEmpty = {
-            name: '',
-            alias: 'Mercurio',
-            team: [
-                'vingadores da costa oeste',
-                'irmandade mutante'
-            ],
-            active: true
-        }
+        const dataTests = [
+            {
+                payload: {
+                    alias: 'Mercurio',
+                    team: ['vingadores'],
+                    active: true
+                },
+                expect_message: '\"name\" is required'
+            },
+            {
+                payload: {
+                    name: 'Pietro Maximoff',
+                    team: ['vingadores'],
+                    active: true
+                },
+                expect_message: '\"alias\" is required'
+            },
+            {
+                payload: {
+                    name: 'Pietro Maximoff',
+                    alias:'Mercurio',
+                    active: true
+                },
+                expect_message: '\"team\" is required'
+            },
+            {
+                payload: {
+                    name: 'Pietro Maximoff',
+                    alias:'Mercurio',
+                    team:['vingadores']
+                },
+                expect_message: '\"active\" is required'
+            }
+        ]
 
-        it('valida obrigatoriedade do Name', () => {
-            cy.postCharacter(characterNameIsEmpty)
-                .then((response) => {
-                    expect(response.status).to.eql(400)
-                    expect(response.body.validation.body.message).to.eql('\"name\" is not allowed to be empty')
-                })
+        dataTests.forEach((data) => {
 
-        })
+            it('validando os campos obrigatórios', () => {
+                cy.postCharacter(data.payload)
+                    .then((response) => {
+                        expect(response.status).to.eql(400)
+                        expect(response.body.message).to.eql('Validation failed')
+                        expect(response.body.validation.body.message).to.eql(data.expect_message)
+                    })
 
-        const characterAliasIsEmpty = {
-            name: 'Pietro Maximoff',
-            alias: '',
-            team: [
-                'vingadores da costa oeste',
-                'irmandade mutante'
-            ],
-            active: true
-        }
-
-        it('valida obrigatoriedade do Alias', () => {
-            cy.postCharacter(characterAliasIsEmpty)
-                .then((response) => {
-                    expect(response.status).to.eql(400)
-                    expect(response.body.validation.body.message).to.eql('\"alias\" is not allowed to be empty')
-                })
-
-        })
-
-        const characterTeamIsEmpty = {
-            name: 'Pietro Maximoff',
-            alias: 'Mercurio',
-            team: [''],
-            active: true
-        }
-
-        it('valida obrigatoriedade do Team', () => {
-            cy.postCharacter(characterTeamIsEmpty)
-                .then((response) => {
-                    expect(response.status).to.eql(400)
-                    expect(response.body.validation.body.message).to.eql('\"team[0]\" is not allowed to be empty')
-                })
-
-        })
-        const characterActiveIsEmpty = {
-            name: 'Pietro Maximoff',
-            alias: 'Mercurio',
-            team: ['vingadores da costa oeste', 'irmandade mutante'],
-            active: ''
-        }
-
-        it('valida obrigatoriedade do Active', () => {
-            cy.postCharacter(characterActiveIsEmpty)
-                .then((response) => {
-                    expect(response.status).to.eql(400)
-                    expect(response.body.validation.body.message).to.eql('"active\" must be a boolean')
-                })
+            })
 
         })
 
